@@ -5,6 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>USDT Tron Monitor - Gestão de Carteiras</title>
     <style>
+        /* Login Styles */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            text-align: center;
+            min-width: 300px;
+        }
+        .login-box h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .login-box button:hover {
+            background: #0056b3;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -443,7 +490,16 @@
 
             .main-content {
                 margin-left: 0;
-            }
+    <!-- Login Screen -->
+    <div id="loginContainer" class="login-container">
+        <div class="login-box">
+            <h2>🔐 USDT Tron Monitor</h2>
+            <input type="text" id="username" placeholder="Usuário" value="admin">
+            <input type="password" id="password" placeholder="Senha" value="123456">
+            <button onclick="handleLogin()">Entrar</button>
+        </div>
+    </div>
+            
 
             .stats-grid {
                 grid-template-columns: 1fr;
@@ -460,6 +516,7 @@
     </style>
 </head>
 <body>
+    
     <div class="container">
         <div class="sidebar">
             <div class="logo">
@@ -1152,7 +1209,27 @@ ${tx.note ? `📝 Anotação: ${tx.note}` : ''}
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
             loadWallets();
-            updateDashboard();
+        // Login function
+        function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'admin' && password === '123456') {
+                document.getElementById('loginContainer').style.display = 'none';
+                localStorage.setItem('isLoggedIn', 'true');
+            } else {
+                alert('Usuário ou senha incorretos!');
+            }
+        }
+        
+        // Check login on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (isLoggedIn === 'true') {
+                document.getElementById('loginContainer').style.display = 'none';
+            }
+        });
+            
             
             // Show dashboard by default
             showSection('dashboard');
@@ -1165,6 +1242,8 @@ ${tx.note ? `📝 Anotação: ${tx.note}` : ''}
                 closeAddWalletModal();
             }
         }
+        
+        
     </script>
 </body>
 </html>
