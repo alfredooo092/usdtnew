@@ -1,0 +1,39 @@
+GUIA DE INSTALAÇÃO RÁPIDA - USDT Tron Monitor
+==============================================
+
+REQUISITOS:
+- Python 3.7 ou superior
+- Conexão com internet
+
+INSTALAÇÃO:
+1. Extrair o arquivo ZIP
+2. Abrir terminal/prompt na pasta extraída
+3. Executar os comandos:
+
+   python3 -m venv venv
+   source venv/bin/activate    (Linux/Mac)
+   venv\Scripts\activate       (Windows)
+   pip install -r requirements.txt
+   python src/main.py
+
+4. Abrir navegador em: http://localhost:5000
+
+CREDENCIAIS:
+Usuário: admin
+Senha: 123456
+
+FUNCIONALIDADES:
+✅ Saldos reais da blockchain Tron
+✅ Transações reais verificáveis no TronScan  
+✅ Gestão completa de carteiras USDT TRC20
+✅ Dashboard com estatísticas
+✅ Detecção de duplicados
+✅ Geração de comprovantes
+
+SUPORTE:
+- Verifique se a porta 5000 está livre
+- Confirme conexão com internet
+- Veja logs no console do navegador
+
+Versão: 2.0 - APIs Reais (10/08/2025)
+
