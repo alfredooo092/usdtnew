@@ -587,7 +587,8 @@
                     <p>Gerencie suas carteiras USDT TRC20</p>
                 </div>
 
-                <button class="btn" onclick="showAddWalletModal()">➕ Adicionar Carteira</button>
+                <button class="btn" onclick="showAddWalletModal()">➕ Adicionar Carteira</button
+                        <button type="button" class="btn btn-success" onclick="syncAllWallets()" style="margin-left: 10px;">🔄 Sincronizar Todas</button>
 
                 <div id="walletsList" style="margin-top: 20px;">
                     <!-- Wallets will be loaded here -->
@@ -1230,7 +1231,70 @@ ${tx.note ? `📝 Anotação: ${tx.note}` : ''}
             }
         });
             
+        // Função para sincronizar todas as carteiras
+        async function syncAllWallets() {
+            const wallets = JSON.parse(localStorage.getItem('wallets')) || [];
             
+            if (wallets.length === 0) {
+                alert('Nenhuma carteira encontrada para sincronizar.');
+                return;
+            }
+            
+            const button = document.querySelector('button[onclick="syncAllWallets()"]');
+            const originalText = button.innerHTML;
+            
+            try {
+                button.innerHTML = '⏳ Sincronizando...';
+                button.disabled = true;
+                
+                let syncedCount = 0;
+                const totalWallets = wallets.length;
+                
+                for (let i = 0; i < wallets.length; i++) {
+                    const wallet = wallets[i];
+                    
+                    // Atualizar texto do botão com progresso
+                    button.innerHTML = `⏳ Sincronizando ${i + 1}/${totalWallets}...`;
+                    
+                    try {
+                        // Buscar saldo real da API
+                        const response = await fetch(`/api/tron/balance/${wallet.address}`);
+                        const data = await response.json();
+                        
+                        if (data.success && data.balance !== undefined) {
+                            // Atualizar saldo no localStorage
+                            wallets[i].balance = data.balance;
+                            wallets[i].lastSync = new Date().toLocaleString('pt-BR');
+                            syncedCount++;
+                        }
+                    } catch (error) {
+                        console.error(`Erro ao sincronizar carteira ${wallet.name}:`, error);
+                    }
+                    
+                    // Pequena pausa entre requisições para não sobrecarregar a API
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+                
+                // Salvar carteiras atualizadas
+                localStorage.setItem('wallets', JSON.stringify(wallets));
+                
+                // Atualizar interface se estivermos na página de carteiras
+                if (typeof displayWallets === 'function') {
+                    displayWallets();
+                }
+                
+                // Mostrar resultado
+                alert(`Sincronização concluída!\n${syncedCount}/${totalWallets} carteiras sincronizadas com sucesso.`);
+                
+            } catch (error) {
+                console.error('Erro durante sincronização:', error);
+                alert('Erro durante a sincronização. Verifique o console para detalhes.');
+            } finally {
+                // Restaurar botão
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
             // Show dashboard by default
             showSection('dashboard');
         });
@@ -1243,6 +1307,8 @@ ${tx.note ? `📝 Anotação: ${tx.note}` : ''}
             }
         }
         
+
+
         
     </script>
 </body>
