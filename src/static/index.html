@@ -1310,7 +1310,49 @@ ${tx.note ? `📝 Anotação: ${tx.note}` : ''}
 
 
         
-    </script>
+    </script        // Função para sincronizar todas as carteiras
+        async function syncAllWallets() {
+            const wallets = JSON.parse(localStorage.getItem('wallets') || '[]');
+            
+            if (wallets.length === 0) {
+                alert('Nenhuma carteira encontrada para sincronizar.');
+                return;
+            }
+
+            const button = event.target;
+            const originalText = button.textContent;
+            
+            try {
+                button.disabled = true;
+                
+                for (let i = 0; i < wallets.length; i++) {
+                    const wallet = wallets[i];
+                    button.textContent = `🔄 Sincronizando ${i + 1}/${wallets.length}...`;
+                    
+                    try {
+                        const balance = await fetchBalance(wallet.address);
+                        wallet.balance = balance;
+                        wallet.lastUpdated = new Date().toLocaleString('pt-BR');
+                    } catch (error) {
+                        console.error(`Erro ao sincronizar carteira ${wallet.address}:`, error);
+                    }
+                }
+                
+                localStorage.setItem('wallets', JSON.stringify(wallets));
+                loadWallets();
+                updateDashboard();
+                
+                alert(`✅ Sincronização concluída! ${wallets.length} carteiras atualizadas.`);
+                
+            } catch (error) {
+                console.error('Erro ao sincronizar carteiras:', error);
+                alert('❌ Erro ao sincronizar carteiras. Tente novamente.');
+            } finally {
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        }
+    
 
     
 </body>
